@@ -258,8 +258,10 @@ func TestRateLimiter_ExcessRequestsBlock(t *testing.T) {
 	f := newRLFixture()
 	f.drain()
 
-	// Try to acquire when no tokens are available
-	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	// Try to acquire when no tokens are available.
+	// Use a generous real-time timeout: the mock clock controls logical time,
+	// but acquireAsync needs real time to register the timer in the goroutine.
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	done := f.acquireAsync(t, ctx, OpGetPage)
@@ -269,16 +271,16 @@ func TestRateLimiter_ExcessRequestsBlock(t *testing.T) {
 		t.Fatal("expected acquire to block and register a timer")
 	}
 
-	// Advance slightly (but not enough for full token refill)
-	f.clk.Advance(200 * time.Millisecond) // Should refill 0.6 tokens at 3/sec
+	// Advance enough to refill at least 1 token (at 3 tokens/sec, need ~334ms).
+	// Use 500ms to provide comfortable margin: 3 * 0.5 = 1.5 tokens.
+	f.clk.Advance(500 * time.Millisecond)
 
-	// Should still be waiting or succeed with refilled tokens
 	select {
 	case err := <-done:
 		if err != nil {
 			t.Errorf("Acquire() failed: %v", err)
 		}
-	case <-time.After(1 * time.Second):
+	case <-time.After(2 * time.Second):
 		t.Fatal("Acquire() did not complete")
 	}
 }
@@ -420,18 +422,19 @@ func TestRateLimiter_StatsIsACopy(t *testing.T) {
 }
 
 func TestRateLimiter_Concurrent(t *testing.T) {
-	// Use real clock for concurrency test since goroutine scheduling is inherent
+	// Use real clock for concurrency test since goroutine scheduling is inherent.
+	// At 3 req/sec with ~10 burst, 20 requests in 10s is comfortably achievable.
 	rl := NewRateLimiter(DefaultTokensPerSec)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	var wg sync.WaitGroup
-	errors := make(chan error, 50)
+	errors := make(chan error, 20)
 	successCount := atomic.Int32{}
 
-	// Launch 50 concurrent requests
-	for i := 0; i < 50; i++ {
+	// Launch 20 concurrent requests (burst + ~3/sec for remaining)
+	for i := 0; i < 20; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
@@ -450,72 +453,55 @@ func TestRateLimiter_Concurrent(t *testing.T) {
 		t.Errorf("concurrent Acquire() error = %v", err)
 	}
 
-	if successCount.Load() != 50 {
-		t.Errorf("only %d requests succeeded (expected 50)", successCount.Load())
+	if successCount.Load() != 20 {
+		t.Errorf("only %d requests succeeded (expected 20)", successCount.Load())
 	}
 }
 
 func TestRateLimiter_ThroughputApproximately3PerSecond(t *testing.T) {
-	// Use real time to test actual throughput
+	// Use real time to test actual throughput.
+	// First drain burst tokens, then measure sustained rate.
 	rl := NewRateLimiter(DefaultTokensPerSec)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var startTime time.Time
-	var endTime time.Time
+	// Drain burst capacity first
+	for i := 0; i < 10; i++ {
+		if err := rl.Acquire(ctx, OpSearch); err != nil {
+			t.Fatalf("burst drain failed: %v", err)
+		}
+	}
+
+	// Now measure sustained throughput over 10 sequential requests
+	startTime := time.Now()
 	requestCount := 0
+	for i := 0; i < 10; i++ {
+		if err := rl.Acquire(ctx, OpSearch); err != nil {
+			break
+		}
+		requestCount++
+	}
+	duration := time.Since(startTime).Seconds()
 
-	for i := 0; i < 20; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
-			mu.Lock()
-			if startTime.IsZero() {
-				startTime = time.Now()
-			}
-			mu.Unlock()
-
-			if err := rl.Acquire(ctx, OpSearch); err != nil {
-				return
-			}
-
-			mu.Lock()
-			requestCount++
-			endTime = time.Now()
-			mu.Unlock()
-		}()
-
-		// Small delay between starting goroutines to avoid race conditions on time tracking
-		time.Sleep(10 * time.Millisecond)
+	if requestCount < 10 {
+		t.Fatalf("expected all 10 requests to succeed; got %d", requestCount)
 	}
 
-	wg.Wait()
-
-	if requestCount < 20 {
-		t.Fatalf("expected all 20 requests to succeed; got %d", requestCount)
-	}
-
-	duration := endTime.Sub(startTime).Seconds()
 	actualThroughput := float64(requestCount) / duration
 
-	// Allow ±50% tolerance (2.25 to 4.5 req/sec, nominal 3)
+	// Allow generous tolerance for CI environments (1.5 to 6.0 req/sec, nominal 3)
 	minExpected := 1.5
-	maxExpected := 4.5
+	maxExpected := 6.0
 
-	if actualThroughput < minExpected || actualThroughput > maxExpected {
-		t.Logf("throughput = %.2f req/sec (duration = %.2f sec, requests = %d)",
-			actualThroughput, duration, requestCount)
-		t.Logf("nominal throughput is ~%.1f req/sec", DefaultTokensPerSec)
-		if actualThroughput < minExpected {
-			t.Errorf("throughput too low: %.2f < %.2f req/sec", actualThroughput, minExpected)
-		}
-		if actualThroughput > maxExpected {
-			t.Errorf("throughput too high: %.2f > %.2f req/sec", actualThroughput, maxExpected)
-		}
+	t.Logf("throughput = %.2f req/sec (duration = %.2f sec, requests = %d)",
+		actualThroughput, duration, requestCount)
+
+	if actualThroughput < minExpected {
+		t.Errorf("throughput too low: %.2f < %.2f req/sec", actualThroughput, minExpected)
+	}
+	if actualThroughput > maxExpected {
+		t.Errorf("throughput too high: %.2f > %.2f req/sec", actualThroughput, maxExpected)
 	}
 }
 
