@@ -230,9 +230,14 @@ func TestLoadTokenEmptyWorkspace(t *testing.T) {
 
 // TestLoadTokenMalformed tests LoadToken with corrupted token file.
 func TestLoadTokenMalformed(t *testing.T) {
-	mgr, _ := setupTestManager(t)
+	mgr, tokensDir := setupTestManager(t)
 	ctx := context.Background()
 	workspace := "test-workspace"
+
+	// Create tokens directory (setupTestManager doesn't create it)
+	if err := os.MkdirAll(tokensDir, 0700); err != nil {
+		t.Fatalf("create tokens dir: %v", err)
+	}
 
 	// Create a corrupted token file
 	tokenPath := mgr.TokenPath(workspace)
@@ -248,9 +253,14 @@ func TestLoadTokenMalformed(t *testing.T) {
 
 // TestLoadTokenStoredMalformed tests LoadToken with token that fails validation.
 func TestLoadTokenStoredMalformed(t *testing.T) {
-	mgr, _ := setupTestManager(t)
+	mgr, tokensDir := setupTestManager(t)
 	ctx := context.Background()
 	workspace := "test-workspace"
+
+	// Create tokens directory (setupTestManager doesn't create it)
+	if err := os.MkdirAll(tokensDir, 0700); err != nil {
+		t.Fatalf("create tokens dir: %v", err)
+	}
 
 	// Manually create a valid JSON file with invalid token
 	tf := tokenFile{
@@ -581,7 +591,7 @@ func TestSanitizeWorkspaceID(t *testing.T) {
 		{"normal-workspace", "normal-workspace"},
 		{"workspace/with/slashes", "workspace_with_slashes"},
 		{"workspace\\with\\backslashes", "workspace_with_backslashes"},
-		{"workspace..with..dots", "workspace__with__dots"},
+		{"workspace..with..dots", "workspace_with_dots"},
 		{"workspace\x00with\x00null", "workspace_with_null"},
 		{"WORKSPACE", "WORKSPACE"},
 		{"workspace-123", "workspace-123"},

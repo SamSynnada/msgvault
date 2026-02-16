@@ -770,7 +770,7 @@ func TestRichTextFormatting(t *testing.T) {
 					},
 				},
 			},
-			expected: "***bold italic**",
+			expected: "***bold italic***",
 		},
 	}
 
