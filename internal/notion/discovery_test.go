@@ -226,8 +226,9 @@ func TestDiscoverer_DiscoverPages_Pagination(t *testing.T) {
 		t.Errorf("Expected 2 pages from pagination, got %d", len(pages))
 	}
 
-	if calls != 2 {
-		t.Errorf("Expected 2 API calls, got %d", calls)
+	// 2 calls for the paginated root search, plus 1 from discoverTopLevelPagesViaSearch
+	if calls != 3 {
+		t.Errorf("Expected 3 API calls, got %d", calls)
 	}
 }
 
@@ -290,22 +291,14 @@ func TestDiscoverer_DiscoverPages_ChildPages(t *testing.T) {
 		pages = append(pages, page)
 	}
 
-	// Should have parent + child = 2 pages
-	if len(pages) != 2 {
-		t.Errorf("Expected 2 pages (parent + child), got %d", len(pages))
+	// Only the parent is sent to the channel; child pages are nested in ChildPages
+	if len(pages) != 1 {
+		t.Errorf("Expected 1 page on channel (parent only), got %d", len(pages))
 	}
 
-	// Find parent
-	var parent *PageInfo
-	for _, p := range pages {
-		if p.ID == "parent1" {
-			parent = p
-			break
-		}
-	}
-
-	if parent == nil {
-		t.Fatal("Parent page not found")
+	parent := pages[0]
+	if parent.ID != "parent1" {
+		t.Fatalf("Expected parent page ID 'parent1', got %q", parent.ID)
 	}
 
 	if len(parent.ChildPages) != 1 {
@@ -525,8 +518,10 @@ func TestDiscoverer_DiscoverPages_MaxDepth(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	// Set max depth to 1 (only discover direct children)
-	pageChan, err := discoverer.DiscoverPages(ctx, &DiscoveryOpts{MaxDepth: 1})
+	// Set max depth to 2 (discover root pages and their direct children, but not grandchildren).
+	// MaxDepth=2 means discoverChildBlocks at depth 0 passes (0+1 < 2), but at depth 1
+	// it stops (1+1 >= 2), so page3 (grandchild) is not discovered.
+	pageChan, err := discoverer.DiscoverPages(ctx, &DiscoveryOpts{MaxDepth: 2})
 	if err != nil {
 		t.Fatalf("DiscoverPages failed: %v", err)
 	}
@@ -536,14 +531,23 @@ func TestDiscoverer_DiscoverPages_MaxDepth(t *testing.T) {
 		pages = append(pages, page)
 	}
 
-	// Should only have page1 (page2 and page3 should not appear as separate results)
+	// Only page1 is sent to the channel; child pages are nested in ChildPages
 	if len(pages) != 1 {
-		t.Errorf("Expected 1 page with MaxDepth=1, got %d", len(pages))
+		t.Errorf("Expected 1 page on channel with MaxDepth=2, got %d", len(pages))
 	}
 
-	// Check that page1's child was discovered
+	// Check that page1's direct child (page2) was discovered, but grandchild (page3) was not
 	if len(pages[0].ChildPages) != 1 {
 		t.Errorf("Expected 1 child page, got %d", len(pages[0].ChildPages))
+	}
+
+	if pages[0].ChildPages[0].ID != "page2" {
+		t.Errorf("Expected child page ID 'page2', got %q", pages[0].ChildPages[0].ID)
+	}
+
+	// page2 should have no children (grandchild page3 blocked by depth limit)
+	if len(pages[0].ChildPages[0].ChildPages) != 0 {
+		t.Errorf("Expected 0 grandchild pages (blocked by depth), got %d", len(pages[0].ChildPages[0].ChildPages))
 	}
 }
 
@@ -789,22 +793,20 @@ func TestDiscoverer_DiscoverPages_BlockPagination(t *testing.T) {
 		pages = append(pages, page)
 	}
 
-	// Should have parent + 2 children
-	if len(pages) != 3 {
-		t.Errorf("Expected 3 pages (parent + 2 children), got %d", len(pages))
+	// Only the parent is sent to the channel; child pages are nested in ChildPages
+	if len(pages) != 1 {
+		t.Errorf("Expected 1 page on channel (parent only), got %d", len(pages))
 	}
 
-	// Find parent and verify children count
-	for _, p := range pages {
-		if p.ID == "page1" {
-			if len(p.ChildPages) != 2 {
-				t.Errorf("Expected 2 child pages, got %d", len(p.ChildPages))
-			}
-			return
-		}
+	parent := pages[0]
+	if parent.ID != "page1" {
+		t.Fatalf("Expected parent page ID 'page1', got %q", parent.ID)
 	}
 
-	t.Fatal("Parent page not found")
+	// Verify both child pages were discovered across paginated block responses
+	if len(parent.ChildPages) != 2 {
+		t.Errorf("Expected 2 child pages, got %d", len(parent.ChildPages))
+	}
 }
 
 func TestDiscoverer_DiscoverPages_SkipDatabases(t *testing.T) {
