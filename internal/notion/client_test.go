@@ -372,7 +372,7 @@ func TestClient_ExhaustsRetries(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := NewClient("ntn_test_token", WithBaseURL(server.URL))
+	client := NewClient("ntn_test_token", WithBaseURL(server.URL), WithMaxRetries(1))
 	_, err := client.SearchPages(context.Background(), &SearchOpts{})
 
 	if err == nil {
@@ -758,7 +758,7 @@ func TestClient_NetworkError(t *testing.T) {
 	address := listener.Addr().String()
 	listener.Close()
 
-	client := NewClient("ntn_test_token", WithBaseURL("http://"+address))
+	client := NewClient("ntn_test_token", WithBaseURL("http://"+address), WithMaxRetries(1))
 	_, err = client.SearchPages(context.Background(), &SearchOpts{})
 
 	if err == nil {

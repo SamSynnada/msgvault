@@ -38,6 +38,7 @@ type ConcreteClient struct {
 	baseURL     string
 	token       string
 	apiVersion  string
+	maxRetries  int
 	rateLimiter *RateLimiter
 	logger      *slog.Logger
 }
@@ -73,12 +74,20 @@ func WithBaseURL(url string) ClientOption {
 	}
 }
 
+// WithMaxRetries sets the maximum number of retries (useful for testing).
+func WithMaxRetries(n int) ClientOption {
+	return func(c *ConcreteClient) {
+		c.maxRetries = n
+	}
+}
+
 // NewClient creates a new Notion API client.
 func NewClient(token string, opts ...ClientOption) *ConcreteClient {
 	c := &ConcreteClient{
 		baseURL:    baseURL,
 		token:      token,
 		apiVersion: apiVersion,
+		maxRetries: maxRetries,
 		logger:     slog.Default(),
 		httpClient: &http.Client{
 			Timeout: defaultTimeout,
@@ -115,7 +124,7 @@ func (c *ConcreteClient) request(ctx context.Context, op Operation, method, path
 	reqURL := c.baseURL + path
 	var lastErr error
 
-	for attempt := 0; attempt <= maxRetries; attempt++ {
+	for attempt := 0; attempt <= c.maxRetries; attempt++ {
 		if attempt > 0 {
 			backoff := c.calculateBackoff(attempt)
 			c.logger.Debug("retrying request", "attempt", attempt, "backoff", backoff, "path", path)
@@ -214,7 +223,7 @@ func (c *ConcreteClient) request(ctx context.Context, op Operation, method, path
 		}
 	}
 
-	return nil, fmt.Errorf("max retries exceeded (%d attempts): %w", maxRetries+1, lastErr)
+	return nil, fmt.Errorf("max retries exceeded (%d attempts): %w", c.maxRetries+1, lastErr)
 }
 
 // calculateBackoff returns the backoff duration for a retry attempt.
