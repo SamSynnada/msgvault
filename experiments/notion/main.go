@@ -129,7 +129,7 @@ func makeRequest(method, endpoint string, body interface{}) ([]byte, error) {
 		return nil, err
 	}
 
-	fmt.Printf("[DEBUG] Status: %d\n", resp.Status)
+	fmt.Printf("[DEBUG] Status: %s\n", resp.Status)
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		fmt.Printf("[DEBUG] Response:\n%s\n", string(respBody))
