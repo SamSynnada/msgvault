@@ -1,0 +1,87 @@
+{
+  "object": "block",
+  "id": "block-richtext-001",
+  "parent": {
+    "type": "page_id",
+    "page_id": "123e4567-e89b-12d3-a456-426614174000"
+  },
+  "created_time": "2024-02-17T10:30:00.000Z",
+  "last_edited_time": "2024-02-17T15:45:30.000Z",
+  "created_by": {
+    "object": "user",
+    "id": "user-123",
+    "type": "person"
+  },
+  "last_edited_by": {
+    "object": "user",
+    "id": "user-123",
+    "type": "person"
+  },
+  "has_children": false,
+  "type": "paragraph",
+  "archived": false,
+  "in_trash": false,
+  "is_locked": false,
+  "paragraph": {
+    "rich_text": [
+      {
+        "type": "text",
+        "text": {
+          "content": "User mention: ",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "User mention: ",
+        "href": null
+      },
+      {
+        "type": "mention",
+        "mention": {
+          "type": "user",
+          "user": {
+            "object": "user",
+            "id": "user-456",
+            "type": "person",
+            "name": "Jane Doe",
+            "email": "jane@example.com"
+          }
+        },
+        "plain_text": "@Jane Doe",
+        "href": null
+      },
+      {
+        "type": "text",
+        "text": {
+          "content": " and equation: ",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "and equation: ",
+        "href": null
+      },
+      {
+        "type": "equation",
+        "equation": {
+          "expression": "E = mc^2"
+        },
+        "plain_text": "E = mc^2",
+        "href": null
+      }
+    ],
+    "color": "default"
+  }
+}

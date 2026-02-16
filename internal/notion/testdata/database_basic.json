@@ -1,0 +1,84 @@
+{
+  "object": "database",
+  "id": "db-123",
+  "created_time": "2024-02-17T10:00:00.000Z",
+  "last_edited_time": "2024-02-17T15:45:30.000Z",
+  "created_by": {
+    "object": "user",
+    "id": "user-123",
+    "type": "person",
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "last_edited_by": {
+    "object": "user",
+    "id": "user-123",
+    "type": "person",
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {
+        "content": "My Database",
+        "link": null
+      },
+      "annotations": {
+        "bold": false,
+        "italic": false,
+        "strikethrough": false,
+        "underline": false,
+        "code": false,
+        "color": "default"
+      },
+      "plain_text": "My Database",
+      "href": null
+    }
+  ],
+  "description": [],
+  "icon": {
+    "type": "emoji",
+    "emoji": "📊"
+  },
+  "cover": {
+    "type": "external",
+    "external": {
+      "url": "https://example.com/db-cover.jpg"
+    }
+  },
+  "properties": {
+    "Name": {
+      "id": "title",
+      "type": "title",
+      "title": {}
+    },
+    "Status": {
+      "id": "status",
+      "type": "status",
+      "status": {
+        "options": [
+          {
+            "id": "opt-1",
+            "name": "Active",
+            "color": "green"
+          },
+          {
+            "id": "opt-2",
+            "name": "Done",
+            "color": "blue"
+          }
+        ]
+      }
+    }
+  },
+  "parent": {
+    "type": "workspace"
+  },
+  "url": "https://www.notion.so/db-123",
+  "public_url": null,
+  "is_inline": true,
+  "archived": false,
+  "in_trash": false,
+  "is_locked": false
+}

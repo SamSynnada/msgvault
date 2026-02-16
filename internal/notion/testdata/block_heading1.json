@@ -1,0 +1,48 @@
+{
+  "object": "block",
+  "id": "block-heading-001",
+  "parent": {
+    "type": "page_id",
+    "page_id": "123e4567-e89b-12d3-a456-426614174000"
+  },
+  "created_time": "2024-02-17T10:30:00.000Z",
+  "last_edited_time": "2024-02-17T15:45:30.000Z",
+  "created_by": {
+    "object": "user",
+    "id": "user-123",
+    "type": "person"
+  },
+  "last_edited_by": {
+    "object": "user",
+    "id": "user-123",
+    "type": "person"
+  },
+  "has_children": false,
+  "type": "heading_1",
+  "archived": false,
+  "in_trash": false,
+  "is_locked": false,
+  "heading_1": {
+    "rich_text": [
+      {
+        "type": "text",
+        "text": {
+          "content": "Main Heading",
+          "link": null
+        },
+        "annotations": {
+          "bold": false,
+          "italic": false,
+          "strikethrough": false,
+          "underline": false,
+          "code": false,
+          "color": "default"
+        },
+        "plain_text": "Main Heading",
+        "href": null
+      }
+    ],
+    "color": "default",
+    "is_toggleable": false
+  }
+}
