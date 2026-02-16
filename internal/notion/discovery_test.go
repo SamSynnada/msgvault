@@ -11,11 +11,11 @@ import (
 
 // MockNotionAPI is a mock implementation of NotionAPI for testing.
 type MockNotionAPI struct {
-	searchPagesFunc      func(context.Context, *SearchOpts) (*SearchResult, error)
-	getPageFunc          func(context.Context, string) (*Page, error)
+	searchPagesFunc         func(context.Context, *SearchOpts) (*SearchResult, error)
+	getPageFunc             func(context.Context, string) (*Page, error)
 	getDatabaseMetadataFunc func(context.Context, string) (*Database, error)
-	getBlockChildrenFunc func(context.Context, string, *BlockListOpts) (*BlockList, error)
-	queryDatabaseFunc    func(context.Context, string, *QueryOpts) (*QueryResult, error)
+	getBlockChildrenFunc    func(context.Context, string, *BlockListOpts) (*BlockList, error)
+	queryDatabaseFunc       func(context.Context, string, *QueryOpts) (*QueryResult, error)
 }
 
 func (m *MockNotionAPI) SearchPages(ctx context.Context, opts *SearchOpts) (*SearchResult, error) {
@@ -96,12 +96,11 @@ func TestDiscoverer_DiscoverPages_SinglePage(t *testing.T) {
 			}
 
 			page := &Page{
-				ID:              "page1",
-				Object:          "page",
-				Title:           "Test Page",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/page1",
+				ID:             "page1",
+				Object:         "page",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/page1",
 				Properties: map[string]interface{}{
 					"title": map[string]interface{}{
 						"title": []interface{}{
@@ -169,12 +168,12 @@ func TestDiscoverer_DiscoverPages_Pagination(t *testing.T) {
 
 			if calls == 1 {
 				page1 := &Page{
-					ID:              "page1",
-					Object:          "page",
-					CreatedTime:     time.Now(),
-					LastEditedTime:  time.Now(),
-					URL:             "https://notion.so/page1",
-					Properties:      map[string]interface{}{},
+					ID:             "page1",
+					Object:         "page",
+					CreatedTime:    time.Now(),
+					LastEditedTime: time.Now(),
+					URL:            "https://notion.so/page1",
+					Properties:     map[string]interface{}{},
 				}
 
 				return &SearchResult{
@@ -186,12 +185,12 @@ func TestDiscoverer_DiscoverPages_Pagination(t *testing.T) {
 
 			// Second call
 			page2 := &Page{
-				ID:              "page2",
-				Object:          "page",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/page2",
-				Properties:      map[string]interface{}{},
+				ID:             "page2",
+				Object:         "page",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/page2",
+				Properties:     map[string]interface{}{},
 			}
 
 			return &SearchResult{
@@ -236,12 +235,12 @@ func TestDiscoverer_DiscoverPages_ChildPages(t *testing.T) {
 	mock := &MockNotionAPI{
 		searchPagesFunc: func(ctx context.Context, opts *SearchOpts) (*SearchResult, error) {
 			page := &Page{
-				ID:              "parent1",
-				Object:          "page",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/parent1",
-				Properties:      map[string]interface{}{},
+				ID:             "parent1",
+				Object:         "page",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/parent1",
+				Properties:     map[string]interface{}{},
 			}
 
 			return &SearchResult{
@@ -252,10 +251,10 @@ func TestDiscoverer_DiscoverPages_ChildPages(t *testing.T) {
 		getBlockChildrenFunc: func(ctx context.Context, pageID string, opts *BlockListOpts) (*BlockList, error) {
 			if pageID == "parent1" {
 				childBlock := &Block{
-					ID:              "child1",
-					Type:            "child_page",
-					CreatedTime:     time.Now(),
-					LastEditedTime:  time.Now(),
+					ID:             "child1",
+					Type:           "child_page",
+					CreatedTime:    time.Now(),
+					LastEditedTime: time.Now(),
 					ChildPage: &ChildPageBlock{
 						Title: "Child Page",
 					},
@@ -326,12 +325,12 @@ func TestDiscoverer_DiscoverPages_ChildDatabases(t *testing.T) {
 	mock := &MockNotionAPI{
 		searchPagesFunc: func(ctx context.Context, opts *SearchOpts) (*SearchResult, error) {
 			page := &Page{
-				ID:              "page1",
-				Object:          "page",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/page1",
-				Properties:      map[string]interface{}{},
+				ID:             "page1",
+				Object:         "page",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/page1",
+				Properties:     map[string]interface{}{},
 			}
 
 			return &SearchResult{
@@ -400,11 +399,11 @@ func TestDiscoverer_DiscoverPages_Database(t *testing.T) {
 	mock := &MockNotionAPI{
 		searchPagesFunc: func(ctx context.Context, opts *SearchOpts) (*SearchResult, error) {
 			db := &Database{
-				ID:              "db1",
-				Object:          "database",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/db1",
+				ID:             "db1",
+				Object:         "database",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/db1",
 				Title: []RichText{
 					{
 						PlainText: "Test Database",
@@ -463,12 +462,12 @@ func TestDiscoverer_DiscoverPages_MaxDepth(t *testing.T) {
 	mock := &MockNotionAPI{
 		searchPagesFunc: func(ctx context.Context, opts *SearchOpts) (*SearchResult, error) {
 			page := &Page{
-				ID:              "page1",
-				Object:          "page",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/page1",
-				Properties:      map[string]interface{}{},
+				ID:             "page1",
+				Object:         "page",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/page1",
+				Properties:     map[string]interface{}{},
 			}
 
 			return &SearchResult{
@@ -480,10 +479,10 @@ func TestDiscoverer_DiscoverPages_MaxDepth(t *testing.T) {
 			if pageID == "page1" {
 				// Create a child page
 				childBlock := &Block{
-					ID:              "page2",
-					Type:            "child_page",
-					CreatedTime:     time.Now(),
-					LastEditedTime:  time.Now(),
+					ID:             "page2",
+					Type:           "child_page",
+					CreatedTime:    time.Now(),
+					LastEditedTime: time.Now(),
 					ChildPage: &ChildPageBlock{
 						Title: "Page 2",
 					},
@@ -498,10 +497,10 @@ func TestDiscoverer_DiscoverPages_MaxDepth(t *testing.T) {
 			if pageID == "page2" {
 				// Create another child page (should be blocked by max depth)
 				grandchildBlock := &Block{
-					ID:              "page3",
-					Type:            "child_page",
-					CreatedTime:     time.Now(),
-					LastEditedTime:  time.Now(),
+					ID:             "page3",
+					Type:           "child_page",
+					CreatedTime:    time.Now(),
+					LastEditedTime: time.Now(),
 					ChildPage: &ChildPageBlock{
 						Title: "Page 3",
 					},
@@ -557,12 +556,12 @@ func TestDiscoverer_DiscoverPages_Limit(t *testing.T) {
 
 			// Return pages as long as limit not reached
 			page := &Page{
-				ID:              "page" + string(rune('0'+calls)),
-				Object:          "page",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/page",
-				Properties:      map[string]interface{}{},
+				ID:             "page" + string(rune('0'+calls)),
+				Object:         "page",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/page",
+				Properties:     map[string]interface{}{},
 			}
 
 			nextCursor := "next"
@@ -666,12 +665,12 @@ func TestDiscoverer_DiscoverPages_BlockChildrenError(t *testing.T) {
 	mock := &MockNotionAPI{
 		searchPagesFunc: func(ctx context.Context, opts *SearchOpts) (*SearchResult, error) {
 			page := &Page{
-				ID:              "page1",
-				Object:          "page",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/page1",
-				Properties:      map[string]interface{}{},
+				ID:             "page1",
+				Object:         "page",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/page1",
+				Properties:     map[string]interface{}{},
 			}
 
 			return &SearchResult{
@@ -715,12 +714,12 @@ func TestDiscoverer_DiscoverPages_BlockPagination(t *testing.T) {
 	mock := &MockNotionAPI{
 		searchPagesFunc: func(ctx context.Context, opts *SearchOpts) (*SearchResult, error) {
 			page := &Page{
-				ID:              "page1",
-				Object:          "page",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/page1",
-				Properties:      map[string]interface{}{},
+				ID:             "page1",
+				Object:         "page",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/page1",
+				Properties:     map[string]interface{}{},
 			}
 
 			return &SearchResult{
@@ -734,10 +733,10 @@ func TestDiscoverer_DiscoverPages_BlockPagination(t *testing.T) {
 				if opts.StartCursor == "" {
 					nextCursor := "next_block"
 					childBlock := &Block{
-						ID:              "page2",
-						Type:            "child_page",
-						CreatedTime:     time.Now(),
-						LastEditedTime:  time.Now(),
+						ID:             "page2",
+						Type:           "child_page",
+						CreatedTime:    time.Now(),
+						LastEditedTime: time.Now(),
 						ChildPage: &ChildPageBlock{
 							Title: "Page 2",
 						},
@@ -752,10 +751,10 @@ func TestDiscoverer_DiscoverPages_BlockPagination(t *testing.T) {
 
 				// Second call returns next batch
 				childBlock := &Block{
-					ID:              "page3",
-					Type:            "child_page",
-					CreatedTime:     time.Now(),
-					LastEditedTime:  time.Now(),
+					ID:             "page3",
+					Type:           "child_page",
+					CreatedTime:    time.Now(),
+					LastEditedTime: time.Now(),
 					ChildPage: &ChildPageBlock{
 						Title: "Page 3",
 					},
@@ -812,11 +811,11 @@ func TestDiscoverer_DiscoverPages_SkipDatabases(t *testing.T) {
 	mock := &MockNotionAPI{
 		searchPagesFunc: func(ctx context.Context, opts *SearchOpts) (*SearchResult, error) {
 			db := &Database{
-				ID:              "db1",
-				Object:          "database",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/db1",
+				ID:             "db1",
+				Object:         "database",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/db1",
 				Title: []RichText{
 					{
 						PlainText: "Test Database",
@@ -825,12 +824,12 @@ func TestDiscoverer_DiscoverPages_SkipDatabases(t *testing.T) {
 			}
 
 			page := &Page{
-				ID:              "page1",
-				Object:          "page",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/page1",
-				Properties:      map[string]interface{}{},
+				ID:             "page1",
+				Object:         "page",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/page1",
+				Properties:     map[string]interface{}{},
 			}
 
 			return &SearchResult{
@@ -895,12 +894,12 @@ func TestDiscoverer_NilOpts(t *testing.T) {
 	mock := &MockNotionAPI{
 		searchPagesFunc: func(ctx context.Context, opts *SearchOpts) (*SearchResult, error) {
 			page := &Page{
-				ID:              "page1",
-				Object:          "page",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/page1",
-				Properties:      map[string]interface{}{},
+				ID:             "page1",
+				Object:         "page",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/page1",
+				Properties:     map[string]interface{}{},
 			}
 
 			return &SearchResult{
@@ -940,8 +939,8 @@ func TestDiscoverer_NilOpts(t *testing.T) {
 
 func TestDiscoverer_ExtractPageTitle_FromProperties(t *testing.T) {
 	page := &Page{
-		ID:         "page1",
-		URL:        "https://notion.so/page1",
+		ID:  "page1",
+		URL: "https://notion.so/page1",
 		Properties: map[string]interface{}{
 			"title": map[string]interface{}{
 				"title": []interface{}{
@@ -1023,12 +1022,12 @@ func TestDiscoverer_CyclePrevention(t *testing.T) {
 	mock := &MockNotionAPI{
 		searchPagesFunc: func(ctx context.Context, opts *SearchOpts) (*SearchResult, error) {
 			page := &Page{
-				ID:              "page1",
-				Object:          "page",
-				CreatedTime:     time.Now(),
-				LastEditedTime:  time.Now(),
-				URL:             "https://notion.so/page1",
-				Properties:      map[string]interface{}{},
+				ID:             "page1",
+				Object:         "page",
+				CreatedTime:    time.Now(),
+				LastEditedTime: time.Now(),
+				URL:            "https://notion.so/page1",
+				Properties:     map[string]interface{}{},
 			}
 
 			return &SearchResult{

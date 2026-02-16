@@ -17,13 +17,13 @@ type Discoverer interface {
 
 // PageInfo represents metadata about a discovered Notion page.
 type PageInfo struct {
-	ID              string
-	Title           string
-	CreatedTime     time.Time
-	LastEditedTime  time.Time
-	IsDatabase      bool
-	ChildDatabases  []*DatabaseInfo
-	ChildPages      []*PageInfo
+	ID             string
+	Title          string
+	CreatedTime    time.Time
+	LastEditedTime time.Time
+	IsDatabase     bool
+	ChildDatabases []*DatabaseInfo
+	ChildPages     []*PageInfo
 }
 
 // DatabaseInfo represents metadata about a discovered database.
@@ -34,9 +34,9 @@ type DatabaseInfo struct {
 
 // DiscoveryOpts configures page discovery behavior.
 type DiscoveryOpts struct {
-	MaxDepth      int // Max recursion depth (0 = unlimited)
+	MaxDepth      int  // Max recursion depth (0 = unlimited)
 	SkipDatabases bool // Skip discovering databases
-	Limit         int // Max pages to discover (0 = unlimited)
+	Limit         int  // Max pages to discover (0 = unlimited)
 }
 
 // discoverer implements the Discoverer interface.

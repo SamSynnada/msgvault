@@ -167,6 +167,30 @@ func (s *Store) UpsertMessageRaw(messageID int64, rawData []byte) error {
 	return err
 }
 
+// UpsertMessageRawWithFormat stores compressed raw data with a specified format.
+// Use this for non-MIME formats like 'notion_markdown', 'whatsapp_json', etc.
+func (s *Store) UpsertMessageRawWithFormat(messageID int64, rawData []byte, format string) error {
+	// Compress with zlib
+	var compressed bytes.Buffer
+	w := zlib.NewWriter(&compressed)
+	if _, err := w.Write(rawData); err != nil {
+		return fmt.Errorf("compress: %w", err)
+	}
+	if err := w.Close(); err != nil {
+		return fmt.Errorf("close compressor: %w", err)
+	}
+
+	_, err := s.db.Exec(`
+		INSERT INTO message_raw (message_id, raw_data, raw_format, compression)
+		VALUES (?, ?, ?, 'zlib')
+		ON CONFLICT(message_id) DO UPDATE SET
+			raw_data = excluded.raw_data,
+			raw_format = excluded.raw_format,
+			compression = excluded.compression
+	`, messageID, compressed.Bytes(), format)
+	return err
+}
+
 // GetMessageRaw retrieves and decompresses the raw MIME data for a message.
 func (s *Store) GetMessageRaw(messageID int64) ([]byte, error) {
 	var compressed []byte

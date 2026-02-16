@@ -365,6 +365,26 @@ func (s *Store) UpdateSourceDisplayName(sourceID int64, displayName string) erro
 	return err
 }
 
+// GetSourceByID returns a source by its internal ID.
+func (s *Store) GetSourceByID(id int64) (*Source, error) {
+	row := s.db.QueryRow(`
+		SELECT id, source_type, identifier, display_name, google_user_id,
+		       last_sync_at, sync_cursor, created_at, updated_at
+		FROM sources
+		WHERE id = ?
+	`, id)
+
+	source, err := scanSource(row)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return source, nil
+}
+
 // GetSourceByIdentifier returns a source by its identifier (email address).
 func (s *Store) GetSourceByIdentifier(identifier string) (*Source, error) {
 	row := s.db.QueryRow(`

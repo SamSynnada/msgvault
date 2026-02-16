@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"time"
 )
 
 // Fetcher retrieves page and database content from Notion API.

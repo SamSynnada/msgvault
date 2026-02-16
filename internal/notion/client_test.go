@@ -327,7 +327,7 @@ func TestClient_Retry_On502(t *testing.T) {
 	defer server.Close()
 
 	client := NewClient("ntn_test_token", WithBaseURL(server.URL))
-	result, err := client.SearchPages(context.Background(), &SearchOpts{})
+	_, err := client.SearchPages(context.Background(), &SearchOpts{})
 
 	if err != nil {
 		t.Errorf("expected no error, got %v", err)
@@ -355,7 +355,7 @@ func TestClient_Retry_On503(t *testing.T) {
 	defer server.Close()
 
 	client := NewClient("ntn_test_token", WithBaseURL(server.URL))
-	result, err := client.SearchPages(context.Background(), &SearchOpts{})
+	_, err := client.SearchPages(context.Background(), &SearchOpts{})
 
 	if err != nil {
 		t.Errorf("expected no error, got %v", err)

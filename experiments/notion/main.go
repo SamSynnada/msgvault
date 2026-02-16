@@ -14,27 +14,27 @@ const NotionAPI = "https://api.notion.com/v1"
 const NotionVersion = "2024-06-15" // Latest stable version
 
 type NotionPage struct {
-	ID         string    `json:"id"`
-	CreatedTime string    `json:"created_time"`
-	LastEditedTime string `json:"last_edited_time"`
-	CreatedBy  map[string]string `json:"created_by"`
-	Properties map[string]interface{} `json:"properties"`
-	Parent     map[string]interface{} `json:"parent"`
-	Object     string `json:"object"`
+	ID             string                 `json:"id"`
+	CreatedTime    string                 `json:"created_time"`
+	LastEditedTime string                 `json:"last_edited_time"`
+	CreatedBy      map[string]string      `json:"created_by"`
+	Properties     map[string]interface{} `json:"properties"`
+	Parent         map[string]interface{} `json:"parent"`
+	Object         string                 `json:"object"`
 }
 
 type NotionBlock struct {
-	ID    string      `json:"id"`
-	Type  string      `json:"type"`
-	Object string      `json:"object"`
-	Paragraph *BlockContent `json:"paragraph,omitempty"`
-	Heading1 *BlockContent `json:"heading_1,omitempty"`
-	Heading2 *BlockContent `json:"heading_2,omitempty"`
-	Heading3 *BlockContent `json:"heading_3,omitempty"`
+	ID               string        `json:"id"`
+	Type             string        `json:"type"`
+	Object           string        `json:"object"`
+	Paragraph        *BlockContent `json:"paragraph,omitempty"`
+	Heading1         *BlockContent `json:"heading_1,omitempty"`
+	Heading2         *BlockContent `json:"heading_2,omitempty"`
+	Heading3         *BlockContent `json:"heading_3,omitempty"`
 	BulletedListItem *BlockContent `json:"bulleted_list_item,omitempty"`
 	NumberedListItem *BlockContent `json:"numbered_list_item,omitempty"`
-	Code *CodeBlock `json:"code,omitempty"`
-	Image *ImageBlock `json:"image,omitempty"`
+	Code             *CodeBlock    `json:"code,omitempty"`
+	Image            *ImageBlock   `json:"image,omitempty"`
 }
 
 type BlockContent struct {
@@ -49,8 +49,8 @@ type CodeBlock struct {
 }
 
 type ImageBlock struct {
-	Type     string      `json:"type"`
-	File     *FileInfo   `json:"file,omitempty"`
+	Type     string        `json:"type"`
+	File     *FileInfo     `json:"file,omitempty"`
 	External *ExternalInfo `json:"external,omitempty"`
 }
 
@@ -64,13 +64,13 @@ type ExternalInfo struct {
 }
 
 type RichText struct {
-	Type     string `json:"type"`
-	Text     *TextInfo `json:"text,omitempty"`
+	Type        string                 `json:"type"`
+	Text        *TextInfo              `json:"text,omitempty"`
 	Annotations map[string]interface{} `json:"annotations,omitempty"`
 }
 
 type TextInfo struct {
-	Content string `json:"content"`
+	Content string    `json:"content"`
 	Link    *LinkInfo `json:"link,omitempty"`
 }
 
@@ -79,17 +79,17 @@ type LinkInfo struct {
 }
 
 type SearchResponse struct {
-	Object  string      `json:"object"`
-	Results []NotionPage `json:"results"`
-	HasMore bool        `json:"has_more"`
-	NextCursor string   `json:"next_cursor"`
+	Object     string       `json:"object"`
+	Results    []NotionPage `json:"results"`
+	HasMore    bool         `json:"has_more"`
+	NextCursor string       `json:"next_cursor"`
 }
 
 type BlocksResponse struct {
-	Object     string       `json:"object"`
+	Object     string        `json:"object"`
 	Results    []NotionBlock `json:"results"`
-	HasMore    bool         `json:"has_more"`
-	NextCursor string       `json:"next_cursor"`
+	HasMore    bool          `json:"has_more"`
+	NextCursor string        `json:"next_cursor"`
 }
 
 func makeRequest(method, endpoint string, body interface{}) ([]byte, error) {

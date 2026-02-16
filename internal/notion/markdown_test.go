@@ -808,7 +808,7 @@ func TestRichTextLinks(t *testing.T) {
 							PlainText: "Google",
 							Text: &TextContent{
 								Content: "Google",
-								Link: func(s string) *string { return &s }("https://google.com"),
+								Link:    func(s string) *string { return &s }("https://google.com"),
 							},
 						},
 					},
@@ -1061,7 +1061,7 @@ func TestMentions(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	converter := NewConverter(logger).(markdownConverter)
+	converter := NewConverter(logger).(*markdownConverter)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

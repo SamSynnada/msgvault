@@ -11,12 +11,12 @@ import (
 
 // MockClient implements NotionAPI for testing.
 type MockClient struct {
-	SearchPagesFunc      func(ctx context.Context, opts *SearchOpts) (*SearchResult, error)
-	GetPageFunc          func(ctx context.Context, pageID string) (*Page, error)
+	SearchPagesFunc         func(ctx context.Context, opts *SearchOpts) (*SearchResult, error)
+	GetPageFunc             func(ctx context.Context, pageID string) (*Page, error)
 	GetDatabaseMetadataFunc func(ctx context.Context, dbID string) (*Database, error)
-	GetBlockChildrenFunc func(ctx context.Context, pageID string, opts *BlockListOpts) (*BlockList, error)
-	QueryDatabaseFunc    func(ctx context.Context, dbID string, opts *QueryOpts) (*QueryResult, error)
-	CloseFunc            func() error
+	GetBlockChildrenFunc    func(ctx context.Context, pageID string, opts *BlockListOpts) (*BlockList, error)
+	QueryDatabaseFunc       func(ctx context.Context, dbID string, opts *QueryOpts) (*QueryResult, error)
+	CloseFunc               func() error
 }
 
 func (m *MockClient) SearchPages(ctx context.Context, opts *SearchOpts) (*SearchResult, error) {

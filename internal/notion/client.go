@@ -17,7 +17,7 @@ import (
 const (
 	baseURL        = "https://api.notion.com/v1"
 	apiVersion     = "2025-09-03"
-	maxRetries     = 6  // Covers ~10 minutes of outages (1s + 2s + 4s + 8s + 16s + 32s + 64s + 128s + 256s ≈ 511s)
+	maxRetries     = 6   // Covers ~10 minutes of outages (1s + 2s + 4s + 8s + 16s + 32s + 64s + 128s + 256s ≈ 511s)
 	maxBackoff     = 600 // Max backoff in seconds (10 minutes)
 	defaultTimeout = 30 * time.Second
 )
@@ -361,11 +361,11 @@ func (c *ConcreteClient) QueryDatabase(ctx context.Context, dbID string, opts *Q
 
 // SearchOpts represents options for searching pages.
 type SearchOpts struct {
-	Query    string         `json:"query,omitempty"`
-	Filter   *SearchFilter  `json:"filter,omitempty"`
-	Sort     *SearchSort    `json:"sort,omitempty"`
-	PageSize int            `json:"page_size,omitempty"`
-	StartCursor string      `json:"start_cursor,omitempty"`
+	Query       string        `json:"query,omitempty"`
+	Filter      *SearchFilter `json:"filter,omitempty"`
+	Sort        *SearchSort   `json:"sort,omitempty"`
+	PageSize    int           `json:"page_size,omitempty"`
+	StartCursor string        `json:"start_cursor,omitempty"`
 }
 
 // SearchFilter represents a filter for search operations.
@@ -407,10 +407,10 @@ type BlockList struct {
 
 // QueryOpts represents options for querying a database.
 type QueryOpts struct {
-	Filter      interface{}  `json:"filter,omitempty"`
-	Sorts       interface{}  `json:"sorts,omitempty"`
-	PageSize    int          `json:"page_size,omitempty"`
-	StartCursor string       `json:"start_cursor,omitempty"`
+	Filter      interface{} `json:"filter,omitempty"`
+	Sorts       interface{} `json:"sorts,omitempty"`
+	PageSize    int         `json:"page_size,omitempty"`
+	StartCursor string      `json:"start_cursor,omitempty"`
 }
 
 // QueryResult represents the response from a database query.

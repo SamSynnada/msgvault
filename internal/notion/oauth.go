@@ -16,8 +16,8 @@ import (
 
 // Error types for token operations.
 var (
-	ErrInvalidToken    = errors.New("invalid or malformed Notion token")
-	ErrTokenNotFound   = errors.New("token not found")
+	ErrInvalidToken     = errors.New("invalid or malformed Notion token")
+	ErrTokenNotFound    = errors.New("token not found")
 	ErrPermissionDenied = errors.New("permission denied")
 )
 

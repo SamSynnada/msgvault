@@ -91,7 +91,7 @@ func TestStoreTokenDirectoryCreation(t *testing.T) {
 
 // TestStoreTokenFilePermissions verifies token file has 0600 permissions.
 func TestStoreTokenFilePermissions(t *testing.T) {
-	mgr, tokensDir := setupTestManager(t)
+	mgr, _ := setupTestManager(t)
 	ctx := context.Background()
 	workspace := "test-workspace"
 	token := "ntn_" + strings.Repeat("a", 50)
@@ -230,7 +230,7 @@ func TestLoadTokenEmptyWorkspace(t *testing.T) {
 
 // TestLoadTokenMalformed tests LoadToken with corrupted token file.
 func TestLoadTokenMalformed(t *testing.T) {
-	mgr, tokensDir := setupTestManager(t)
+	mgr, _ := setupTestManager(t)
 	ctx := context.Background()
 	workspace := "test-workspace"
 
@@ -248,7 +248,7 @@ func TestLoadTokenMalformed(t *testing.T) {
 
 // TestLoadTokenStoredMalformed tests LoadToken with token that fails validation.
 func TestLoadTokenStoredMalformed(t *testing.T) {
-	mgr, tokensDir := setupTestManager(t)
+	mgr, _ := setupTestManager(t)
 	ctx := context.Background()
 	workspace := "test-workspace"
 
@@ -707,7 +707,7 @@ func TestTokenValidationEdgeCases(t *testing.T) {
 
 // TestBenchmark_StoreAndLoadToken provides benchmark data for common operations.
 func BenchmarkStoreToken(b *testing.B) {
-	mgr, _ := setupTestManager(&testing.T{}, )
+	mgr, _ := setupTestManager(&testing.T{})
 	ctx := context.Background()
 	token := "ntn_" + strings.Repeat("a", 50)
 

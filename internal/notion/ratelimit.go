@@ -10,11 +10,11 @@ import (
 type Operation string
 
 const (
-	OpSearch       Operation = "search"
-	OpGetPage      Operation = "get_page"
-	OpGetBlocks    Operation = "get_blocks"
+	OpSearch        Operation = "search"
+	OpGetPage       Operation = "get_page"
+	OpGetBlocks     Operation = "get_blocks"
 	OpQueryDatabase Operation = "query_db"
-	OpUpdatePage   Operation = "update_page"
+	OpUpdatePage    Operation = "update_page"
 )
 
 // Clock abstracts time operations for testability.
@@ -32,13 +32,13 @@ func (realClock) After(d time.Duration) <-chan time.Time { return time.After(d) 
 // RateLimiter implements a token bucket rate limiter for Notion API calls.
 // It is safe for concurrent use.
 type RateLimiter struct {
-	mu             sync.Mutex
-	clock          Clock
-	tokens         float64
-	lastRefill     time.Time
-	tokensPerSec   float64
-	maxBurst       float64
-	acquiredCount  map[Operation]int64
+	mu            sync.Mutex
+	clock         Clock
+	tokens        float64
+	lastRefill    time.Time
+	tokensPerSec  float64
+	maxBurst      float64
+	acquiredCount map[Operation]int64
 }
 
 const (
@@ -72,11 +72,11 @@ func newRateLimiter(clk Clock, tokensPerSec float64) *RateLimiter {
 	}
 
 	return &RateLimiter{
-		clock:        clk,
-		tokens:       maxBurst, // Start with full burst capacity
-		lastRefill:   clk.Now(),
-		tokensPerSec: tokensPerSec,
-		maxBurst:     maxBurst,
+		clock:         clk,
+		tokens:        maxBurst, // Start with full burst capacity
+		lastRefill:    clk.Now(),
+		tokensPerSec:  tokensPerSec,
+		maxBurst:      maxBurst,
 		acquiredCount: make(map[Operation]int64),
 	}
 }
