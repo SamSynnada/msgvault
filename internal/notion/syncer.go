@@ -141,8 +141,10 @@ func (s *Syncer) Full(ctx context.Context, workspaceID string) (result *SyncResu
 	s.logger.Info("starting notion full sync", "workspace", workspaceID)
 
 	// Discover pages
+	// MaxDepth=1 avoids recursive block traversal — search already returns all pages.
 	discoveryOpts := &DiscoveryOpts{
-		Limit: s.opts.Limit,
+		Limit:    s.opts.Limit,
+		MaxDepth: 1,
 	}
 	pagesCh, err := s.discoverer.DiscoverPages(ctx, discoveryOpts)
 	if err != nil {
