@@ -367,7 +367,7 @@ func (mc *markdownConverter) formatRichText(rt RichText) string {
 		if rt.Text != nil {
 			text = rt.Text.Content
 			if rt.Text.Link != nil {
-				url = *rt.Text.Link
+				url = rt.Text.Link.URL
 			}
 		}
 	case "mention":

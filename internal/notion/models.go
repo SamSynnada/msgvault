@@ -74,8 +74,13 @@ type RichText struct {
 
 // TextContent represents the text part of rich text.
 type TextContent struct {
-	Content string  `json:"content"`
-	Link    *string `json:"link"`
+	Content string    `json:"content"`
+	Link    *LinkInfo `json:"link"`
+}
+
+// LinkInfo represents a link object in rich text.
+type LinkInfo struct {
+	URL string `json:"url"`
 }
 
 // Mention represents a mention in rich text.
@@ -132,11 +137,11 @@ type TextAnnotations struct {
 
 // Parent represents the parent of a page or block.
 type Parent struct {
-	Type        string  `json:"type"`
-	PageID      *string `json:"page_id,omitempty"`
-	BlockID     *string `json:"block_id,omitempty"`
-	DatabaseID  *string `json:"database_id,omitempty"`
-	WorkspaceID *string `json:"workspace,omitempty"`
+	Type       string  `json:"type"`
+	PageID     *string `json:"page_id,omitempty"`
+	BlockID    *string `json:"block_id,omitempty"`
+	DatabaseID *string `json:"database_id,omitempty"`
+	Workspace  bool    `json:"workspace,omitempty"`
 }
 
 // User represents a Notion user.

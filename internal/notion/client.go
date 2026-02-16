@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	baseURL        = "https://api.notion.com/v1"
+	baseURL        = "https://api.notion.com"
 	apiVersion     = "2025-09-03"
 	maxRetries     = 6   // Covers ~10 minutes of outages (1s + 2s + 4s + 8s + 16s + 32s + 64s + 128s + 256s ≈ 511s)
 	maxBackoff     = 600 // Max backoff in seconds (10 minutes)

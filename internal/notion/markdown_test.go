@@ -808,7 +808,7 @@ func TestRichTextLinks(t *testing.T) {
 							PlainText: "Google",
 							Text: &TextContent{
 								Content: "Google",
-								Link:    func(s string) *string { return &s }("https://google.com"),
+								Link:    &LinkInfo{URL: "https://google.com"},
 							},
 						},
 					},
