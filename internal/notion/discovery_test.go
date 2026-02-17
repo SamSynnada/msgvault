@@ -103,6 +103,7 @@ func TestDiscoverer_DiscoverPages_SinglePage(t *testing.T) {
 				URL:            "https://notion.so/page1",
 				Properties: map[string]interface{}{
 					"title": map[string]interface{}{
+						"type": "title",
 						"title": []interface{}{
 							map[string]interface{}{
 								"plain_text": "Test Page",
@@ -945,6 +946,7 @@ func TestDiscoverer_ExtractPageTitle_FromProperties(t *testing.T) {
 		URL: "https://notion.so/page1",
 		Properties: map[string]interface{}{
 			"title": map[string]interface{}{
+				"type": "title",
 				"title": []interface{}{
 					map[string]interface{}{
 						"plain_text": "My Page Title",

@@ -431,23 +431,33 @@ func (d *discoverer) parseSearchResult(item interface{}, discovered map[string]b
 // extractPageTitle extracts a human-readable title from a page.
 // Returns the URL as fallback if no title can be extracted.
 func (d *discoverer) extractPageTitle(page *Page) string {
-	// Try to get title from properties (most common case)
 	if page.Properties != nil {
-		// Look for "title" property
-		if titleProp, ok := page.Properties["title"]; ok {
-			if titleMap, ok := titleProp.(map[string]interface{}); ok {
-				if titleList, ok := titleMap["title"].([]interface{}); ok && len(titleList) > 0 {
-					if richText, ok := titleList[0].(map[string]interface{}); ok {
-						if plainText, ok := richText["plain_text"].(string); ok && plainText != "" {
-							return plainText
-						}
-					}
-				}
+		// Iterate all properties looking for one with type "title"
+		// (the key name varies: "title", "Name", etc.)
+		for _, v := range page.Properties {
+			propMap, ok := v.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			propType, _ := propMap["type"].(string)
+			if propType != "title" {
+				continue
+			}
+			titleArr, ok := propMap["title"].([]interface{})
+			if !ok || len(titleArr) == 0 {
+				continue
+			}
+			firstItem, ok := titleArr[0].(map[string]interface{})
+			if !ok {
+				continue
+			}
+			if plainText, ok := firstItem["plain_text"].(string); ok && plainText != "" {
+				return plainText
 			}
 		}
 	}
 
-	// Fallback to page ID if no title found
+	// Fallback to URL if no title found
 	return page.URL
 }
 
